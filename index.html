@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualizador de Dataset NLP - Análise de Sentimentos</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        body { margin: 20px; }
+        #dataset { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Visualizador de Dataset - Análise de Sentimentos</h1>
+        <div class="form-group">
+            <label for="filter">Filtrar por sentimento:</label>
+            <select id="filter" class="form-control">
+                <option value="all">Todos</option>
+                <option value="positivo">Positivo</option>
+                <option value="negativo">Negativo</option>
+                <option value="neutro">Neutro</option>
+            </select>
+        </div>
+        <button id="downloadBtn" class="btn btn-primary">Baixar Dataset</button>
+        <div id="dataset" class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Texto</th>
+                        <th>Sentimento</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Dados do dataset serão inseridos aqui -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const datasetUrl = 'path/to/dataset.json'; // URL do dataset
+
+        function fetchDataset() {
+            axios.get(datasetUrl)
+                .then(response => {
+                    const data = response.data;
+                    renderDataset(data);
+                })
+                .catch(error => console.error('Erro ao carregar o dataset:', error));
+        }
+
+        function renderDataset(data) {
+            const tbody = document.querySelector('#dataset tbody');
+            tbody.innerHTML = '';
+            const filterValue = document.querySelector('#filter').value;
+            const filteredData = filterValue === 'all' ? data : data.filter(d => d.sentimento === filterValue);
+
+            filteredData.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `<td>${item.texto}</td><td>${item.sentimento}</td>`;
+                tbody.appendChild(row);
+            });
+        }
+
+        document.getElementById('filter').addEventListener('change', fetchDataset);
+        document.getElementById('downloadBtn').addEventListener('click', () => {
+            window.location.href = datasetUrl;
+        })
+
+        fetchDataset();
+    </script>
+</body>
+</html>
